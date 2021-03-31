@@ -18,7 +18,7 @@ plugins:
   - serverless-dotenv-plugin
   # https://github.com/serverless-heaven/serverless-webpack/tree/master/examples
   - serverless-webpack
-  # - serverless-dynamodb-local
+  - serverless-dynamodb-local
   # https://github.com/serverless-heaven/serverless-webpack#usage-with-serverless-offline
   - serverless-offline
 

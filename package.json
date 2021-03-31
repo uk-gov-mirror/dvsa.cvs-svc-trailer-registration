@@ -40,15 +40,18 @@
     "sonar-scanner": "sonar-scanner",
     "package:create": "cross-env SERVICE=${npm_package_name} NODE_ENV=local sls package --package .build",
     "package:prepare": "mv ./.build/app.zip ./.build/build.zip",
-    "package:move": "mv ./.build/build.zip ./build.zip",
+    "package:move": "mv ./.build/build.zip ./${ZIP_NAME}.zip",
     "package": "npm-run-all clean package:*",
     "release": "semantic-release",
     "prerelease": "semantic-release --dry-run",
-    "dependencies:check": "ncu"
+    "dependencies:check": "ncu",
+    "dynamodb": "sls dynamodb start",
+    "tools-setup": "sls dynamodb migrate && BRANCH=local node_modules/gulp/bin/gulp.js start-serverless"
   },
   "dependencies": {
     "aws-lambda": "1.0.6",
     "express": "4.17.1",
+    "serverless-dynamodb-local": "0.2.39",
     "serverless-http": "2.6.0",
     "source-map-support": "0.5.19"
   },
