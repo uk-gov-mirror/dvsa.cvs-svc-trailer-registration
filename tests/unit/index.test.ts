@@ -1,5 +1,5 @@
 import { APIGatewayEvent, Context } from 'aws-lambda';
-import { handler } from '../../src';
+import { handler } from '../../src/handler';
 import * as Utils from '../../src/utils';
 import Version from '../../local/data/version.json';
 import Template from '../../local/data/template-something.json';
@@ -80,7 +80,7 @@ describe('Application entry', () => {
           const { statusCode, body } = await handler(event, context);
           expect(statusCode).toEqual(200);
           expect(body).not.toBe(undefined);
-          expect(body).toEqual('ok /id/something');
+          expect(body).toEqual('ok template route');
         });
 
         it("should get a '404' if the base path endpoint does not contain the 'SERVICE'", async () => {

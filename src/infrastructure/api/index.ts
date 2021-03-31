@@ -13,15 +13,20 @@ const { API_VERSION, SERVICE } = process.env;
  * (POST) http://localhost:3009/<stage>/                                 (configured on AWS)
  *                                      <**>/<*>/template/:id/something  (configured/proxied from app)
  */
-router.get('/', (_, res, next) => {
+// router.get('/', (_, res, next) => {
+//   res.send('ok template route');
+//   next();
+// });
+
+router.post('/', (_, res, next) => {
   res.send('ok template route');
   next();
 });
 
-router.post('/:id/something', (_, res, next) => {
-  res.send('ok /id/something');
-  next();
-});
+// router.post('/:id/something', (_, res, next) => {
+//   res.send('ok /id/something');
+//   next();
+// });
 
 // Defining template routes, anything before /cvs-svc-template is proxied
 app.use(`/*/${SERVICE}/`, router);
