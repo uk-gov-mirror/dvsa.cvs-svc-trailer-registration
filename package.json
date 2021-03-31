@@ -46,7 +46,7 @@
     "prerelease": "semantic-release --dry-run",
     "dependencies:check": "ncu",
     "dynamodb": "sls dynamodb start",
-    "tools-setup": "sls dynamodb migrate && BRANCH=local node_modules/gulp/bin/gulp.js start-serverless"
+    "tools-setup": ""
   },
   "dependencies": {
     "aws-lambda": "1.0.6",
