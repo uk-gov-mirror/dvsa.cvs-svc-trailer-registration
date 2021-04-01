@@ -19,16 +19,16 @@ const handler = async (event: APIGatewayEvent, context: Context): Promise<APIGat
    * Proxied requests from AWS are intercepted and handled by our express Router -> <stage>/<*> where stage is your branch
    * Our app allows proxies requests until /template path is reached
    * Express will then handle/call a Controller to call the appropriate functions
-   * Our app allows the following paths -> <stage>/<**>/<*>/template/<service_endpoints>
+   * Our app allows the following paths -> <stage>/<**>/<*>/trailers/<service_endpoints>
    *
    * |===========================================================|
    * | Example of event object received                          |
    * |-----------------------------------------------------------|
    * | ...,                                                      |
    * | "httpMethod": "POST",                                     |
-   * | "path": "/proxiedstuff/svc-svc-template/1/something",     |
+   * | "path": "/proxiedstuff/trailers/1/something",     |
    * | "pathParameters": {                                       |
-   * |    "proxy": "proxiedstuff/svc-svc-template/1/something"   |
+   * |    "proxy": "proxiedstuff/trailers/1/something"   |
    * |  },                                                       |
    * |  ...                                                      |
    * |-----------------------------------------------------------|

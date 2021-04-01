@@ -1,6 +1,4 @@
-# cvs-svc-template
-
-The template for CVS lambda services
+# cvs-svc-trailer-registration
 
 ## Dependencies
 
@@ -10,8 +8,11 @@ The project runs on node 10.x with typescript and serverless framework. For furt
 ## Running the project
 
 Once the dependencies are installed, you will be required to rename the `/config/env.example` file to `.env.local` as we use dotenv files for configuration for local local development for example. Further information about [variables](https://www.serverless.com/framework/docs/providers/aws/guide/variables/) and [environment variables](https://www.serverless.com/framework/docs/environment-variables/) with serverless.
+Please note that serverless framework is only used to develop locally and mock API Gateway.
 
 The application runs on port `:3001` by default when no stage is provided.
+
+The service has local environmental variables (please see `env` placeholder file) set locally however should we wish to further extend the service, the environmental variables will need to be ported over to the CI/CD pipeline which currently uses the following environmental variables: `BRANCH` and `BUCKET`.
 
 ### Environments
 
@@ -57,10 +58,12 @@ Serverless-offline with webpack is used to run the project locally. Please use `
 
 The below routes are available as default routes from this scaffolding
 
-```
-(GET) http://localhost:3009/local-stage/version
-(GET) http://localhost:3009/local-stage/*/service-name/
-(POST) http://localhost:3009/local-stage/*/service-name/:id/something
+```shell
+(GET) http://localhost:3001/local/version
+
+# We enable proxying so that APIG can be configured with any parent routes
+# The app router is mounted on '/trailers' which will define the beginning of our valid routes in the service
+(POST) http://localhost:3001/local/*/trailers/
 ```
 
 ### Lambda locally

@@ -1,8 +1,8 @@
 {
-  "name": "trailers",
+  "name": "cvs-svc-trailer-registration",
   "version": "1.0.0",
   "description": "",
-  "main": "src/index.ts",
+  "main": "src/handler.ts",
   "engines": {
     "node": "10.*",
     "npm": "6.*"
@@ -101,18 +101,17 @@
   "author": "",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/dvsa/cvs-svc-template/issues"
+    "url": "https://github.com/dvsa/cvs-svc-trailer-registration.git/issues"
   },
-  "homepage": "https://github.com/dvsa/cvs-svc-template#readme",
+  "homepage": "https://github.com/dvsa/cvs-svc-trailer-registration.git#readme",
   "repository": {
     "type": "git",
-    "url": "https://github.com/dvsa/cvs-svc-template.git"
+    "url": "https://github.com/dvsa/cvs-svc-trailer-registration.git"
   },
   "keywords": [
     "DVLA",
     "DVSA",
     "CVS",
-    "Template",
     "TRL",
     "VRM",
     "MOT"
