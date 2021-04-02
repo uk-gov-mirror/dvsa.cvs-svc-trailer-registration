@@ -1,0 +1,1 @@
+export { TrailerRegistration } from './TrailerRegistration';
