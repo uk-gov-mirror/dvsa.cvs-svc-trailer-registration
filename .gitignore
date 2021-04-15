@@ -41,3 +41,6 @@ reports
 
 # Source maps
 *.map
+
+# Dynamo
+.dynamodb

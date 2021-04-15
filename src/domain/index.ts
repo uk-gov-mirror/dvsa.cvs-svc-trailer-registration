@@ -1,1 +1,1 @@
-export { TrailerRegistration } from './TrailerRegistration';
+export { TrailerRegistration } from './trailer-registration';

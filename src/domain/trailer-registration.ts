@@ -1,5 +1,5 @@
 export interface TrailerRegistration {
-  vinOrChassisWithMake: string;
+  vinOrChassisWithMake?: string;
   vin: string;
   make: string;
   trn: string;
