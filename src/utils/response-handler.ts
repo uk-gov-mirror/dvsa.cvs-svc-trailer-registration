@@ -1,4 +1,8 @@
-import { HttpResponse } from 'aws-sdk';
+// import { HttpResponse } from 'aws-sdk';
+export interface HttpResponse {
+  body?: unknown;
+  statusCode: number;
+}
 
 export class ResponseHandler {
   /**
@@ -6,9 +10,10 @@ export class ResponseHandler {
    * @param body The body of the response object.
    */
   public static success(body?: string): HttpResponse {
-    const response = new HttpResponse();
-    response.statusCode = body ? 200 : 204;
-    response.body = body;
+    const response: HttpResponse = {
+      statusCode: body ? 200 : 204,
+      body,
+    };
     return response;
   }
 
@@ -19,10 +24,7 @@ export class ResponseHandler {
    * @returns
    */
   public static failure(statusCode: number, body: string): HttpResponse {
-    const response = new HttpResponse();
-    response.statusCode = statusCode;
-    response.body = body;
-    console.error(body);
+    const response = { statusCode, body };
     return response;
   }
 }

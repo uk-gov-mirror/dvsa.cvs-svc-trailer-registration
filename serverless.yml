@@ -38,16 +38,16 @@ provider:
   environment:
     SERVICE_VERSION: ${env:API_VERSION}
     AWS_PROVIDER_REGION: ${self:provider.region}
-    SERVICE: ${self:service}
+    SERVICE: ${env:SERVICE}
 
 functions:
   # Use express routing so we don't rely on APIG and leverage express API
   app:
     handler: src/handler.handler
     events:
-      - http: 'GET /'
+      - http: ANY ${env:SERVICE}/
+      - http: 'ANY ${env:SERVICE}/{proxy+}'
       # We will proxy version from here in the client to match the API specs e.g. <stage>/**/*/<service>
-      - http: 'POST /{proxy+}'
   # Can also define specific functions on exposed routes using pattern matching, see below as example:
   # handler.ts containing exported getHello function is exposed on path /hello
   # that you can test locally sls invoke local -f getHello -d '{"path": "hello"}' or with sls offline
@@ -72,9 +72,9 @@ custom:
     start:
       port: ${env:DYNAMO_PORT, 8020}
       inMemory: true
-      migrate: false
-      seed: false
-      noStart: true
+      migrate: true
+      seed: true
+      noStart: false
     seed:
       trailer-registration:
         sources:
@@ -85,7 +85,7 @@ custom:
       - dev
       - test
   
-  resources:
+resources:
    Resources:
     TrailerRegistration:
       Type: AWS::DynamoDB::Table
@@ -93,12 +93,6 @@ custom:
         TableName: cvs-local-trailer-registration
         AttributeDefinitions:
           - AttributeName: vinOrChassisWithMake
-            AttributeType: S
-          - AttributeName: vin
-            AttributeType: S
-          - AttributeName: make
-            AttributeType: S
-          - AttributeName: trn
             AttributeType: S
         KeySchema:
           - AttributeName: vinOrChassisWithMake
@@ -108,6 +102,11 @@ custom:
             KeySchema:
               - AttributeName: vinOrChassisWithMake
                 KeyType: HASH
+            Projection:
+              ProjectionType: ALL
+            ProvisionedThroughput:
+              ReadCapacityUnits: '1'
+              WriteCapacityUnits: '1'
         ProvisionedThroughput:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1

@@ -27,11 +27,19 @@ export class Configurations {
     return process.env.AWS_PROVIDER_STAGE;
   }
 
+  get service(): string {
+    return process.env.SERVICE;
+  }
+
   get dynamoTableName(): string {
     return process.env.DYNAMO_TABLE_NAME;
   }
 
-  get service(): string {
-    return process.env.SERVICE;
+  get dynamoParams(): unknown {
+    return {
+      region: this.awsRegion,
+      endpoint: process.env.DYNAMO_ENDPOINT,
+      convertEmptyValues: process.env.CONVERT_EMPTY_VALUES,
+    };
   }
 }

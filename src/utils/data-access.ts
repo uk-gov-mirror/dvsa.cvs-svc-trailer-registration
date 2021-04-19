@@ -1,7 +1,7 @@
 import { PromiseResult } from 'aws-sdk/lib/request';
 import { AWSError } from 'aws-sdk/lib/error';
-import { DocumentClient, QueryOutput } from 'aws-sdk/clients/dynamodb';
-import { Configurations } from '../interfaces/middlewares/configuration';
+import DynamoDB, { DocumentClient, QueryOutput } from 'aws-sdk/clients/dynamodb';
+import { Configurations } from './configuration';
 
 export class DataAccess {
   private static instance: DataAccess;
@@ -12,6 +12,7 @@ export class DataAccess {
 
   private constructor() {
     this.tableName = Configurations.getInstance().dynamoTableName;
+    DataAccess.docClient = new DynamoDB.DocumentClient(Configurations.getInstance().dynamoParams);
   }
 
   public static getInstance(): DataAccess {
@@ -25,20 +26,18 @@ export class DataAccess {
   public getById(options: {
     indexName: string;
     keyCondition: string;
-    expressionAttirbute: { [key: string]: string };
     expressionAttributeValues: { [key: string]: string };
   }): Promise<PromiseResult<QueryOutput, AWSError>> {
     const params = {
       TableName: this.tableName,
       IndexName: options.indexName,
       KeyConditionExpression: options.keyCondition,
-      ExpressionAttributeNames: options.expressionAttirbute,
       ExpressionAttributeValues: options.expressionAttributeValues,
     };
     return DataAccess.docClient.query(params).promise();
   }
 
-  public async createSingle<T>(
+  public async put<T>(
     payload: T,
     options: { conditionalExpression: string; expressionAttributeValues: { [key: string]: string } },
   ): Promise<PromiseResult<DocumentClient.PutItemOutput, AWSError>> {
