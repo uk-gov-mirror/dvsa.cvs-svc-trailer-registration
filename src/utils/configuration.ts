@@ -15,21 +15,21 @@ export class Configurations {
     return Configurations.instance;
   }
 
-  get awsProfile(): string {
-    return process.env.AWS_PROVIDER_PROFILE;
-  }
+  // get awsProfile(): string {
+  //   return process.env.AWS_PROVIDER_PROFILE;
+  // }
 
   get awsRegion(): string {
     return process.env.AWS_PROVIDER_REGION;
   }
 
-  get awsStage(): string {
-    return process.env.AWS_PROVIDER_STAGE;
-  }
+  // get awsStage(): string {
+  //   return process.env.AWS_PROVIDER_STAGE;
+  // }
 
-  get service(): string {
-    return process.env.SERVICE;
-  }
+  // get service(): string {
+  //   return process.env.SERVICE;
+  // }
 
   get dynamoTableName(): string {
     return process.env.DYNAMO_TABLE_NAME;

@@ -1,6 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
 
-export interface IRequestHandler<T> {
+export interface IRequestHandler {
   call(req: Request, res: Response, next: NextFunction);
-  validate(payload?: T): boolean;
 }

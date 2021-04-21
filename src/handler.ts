@@ -13,27 +13,9 @@ console.log(
 );
 
 const handler = async (event: APIGatewayEvent, context: Context): Promise<APIGatewayProxyStructuredResultV2> => {
+  // TODO: REMOVE ONCE all development is done.
   console.log('event');
   console.log(JSON.stringify(event, null, 2));
-  /**
-   * Proxied requests from AWS are intercepted and handled by our express Router -> <stage>/<*> where stage is your branch
-   * Our app allows proxies requests until /template path is reached
-   * Express will then handle/call a Controller to call the appropriate functions
-   * Our app allows the following paths -> <stage>/<**>/<*>/trailers/<service_endpoints>
-   *
-   * |===========================================================|
-   * | Example of event object received                          |
-   * |-----------------------------------------------------------|
-   * | ...,                                                      |
-   * | "httpMethod": "POST",                                     |
-   * | "path": "/proxiedstuff/trailers/1/something",     |
-   * | "pathParameters": {                                       |
-   * |    "proxy": "proxiedstuff/trailers/1/something"   |
-   * |  },                                                       |
-   * |  ...                                                      |
-   * |-----------------------------------------------------------|
-   *
-   */
   return serverless(app)(event, context);
 };
 

@@ -1,28 +1,25 @@
 import { Request, Response, NextFunction } from 'express';
 import * as domain from '../../../domain';
-import { ResponseHandler } from '../../../utils/response-handler';
 import { DataAccess } from '../../../utils/data-access';
 import { IRequestHandler } from '../i-request-handler';
 import { insertValidator } from './insert-trailer-validator';
 
-export class InsertTrailerRegistration implements IRequestHandler<domain.TrailerRegistration> {
-  validate(payload?: domain.TrailerRegistration): boolean {
+export class InsertTrailerRegistration implements IRequestHandler {
+  private validate(payload?: domain.TrailerRegistration): string {
     const errors = insertValidator.validate(payload, { abortEarly: false }).error;
-    if (errors) {
-      throw new Error(errors.annotate());
-    }
-    return !errors;
+    return errors?.message;
   }
 
   public async call(req: Request, res: Response, next: NextFunction) {
     const trailerRegistration = req.body as domain.TrailerRegistration;
-    console.info('inside insert-trailer');
+    // TODO: remove once development is done
     console.log(trailerRegistration);
-    try {
-      this.validate(trailerRegistration);
-    } catch (err) {
-      next(ResponseHandler.failure(400, err));
+    const errors = this.validate(trailerRegistration);
+    if (errors) {
+      next(new domain.HTTPError(400, errors));
+      return;
     }
+
     const { vin, make, certificateIssueDate } = trailerRegistration;
     const vinOrChassisWithMake = vin.length === 17 ? vin : vin + make;
 
@@ -32,41 +29,32 @@ export class InsertTrailerRegistration implements IRequestHandler<domain.Trailer
         await this.deregisterTrailer(existingTrailerRegistration, certificateIssueDate);
       }
     } catch (error) {
-      next(ResponseHandler.failure(500, error));
+      console.error(error);
+      next(new domain.HTTPError(500, error));
+      return;
     }
     try {
-      const insertParams = {
-        conditionalExpression: 'vinOrChassisWithMake <> :vinOrChassisWithMake',
-        expressionAttributeValues: { ':vinOrChassisWithMake': vinOrChassisWithMake },
-      };
       trailerRegistration.vinOrChassisWithMake = vinOrChassisWithMake;
-      await DataAccess.getInstance().put<domain.TrailerRegistration>(trailerRegistration, insertParams);
+      await DataAccess.getInstance().insertTrailerRegisteration(trailerRegistration);
     } catch (error) {
-      next(ResponseHandler.failure(500, error));
+      next(new domain.HTTPError(500, error));
+      return;
     }
-    const response = ResponseHandler.success();
-    res.status(response.statusCode).send(response.body);
+    res.status(204).send();
   }
 
   private async checkForExistingTrailerRegistration(
     vinOrChassisWithMake: string,
   ): Promise<domain.TrailerRegistration | null> {
-    const getParams = {
-      indexName: 'vinOrChassisWithMakeIndex',
-      keyCondition: 'vinOrChassisWithMake = :vinOrChassisWithMake',
-      expressionAttributeValues: {
-        ':vinOrChassisWithMake': vinOrChassisWithMake,
-      },
-    };
-    const data = (await DataAccess.getInstance().getById(getParams)) as { Count: number; Items: unknown };
-    if (!data || !data.Count) {
+    const trailerRegistration = await DataAccess.getInstance().getByVinOrChassisWithMake(vinOrChassisWithMake);
+    if (!trailerRegistration) {
       return null;
     }
-    const trailerRegistration = data.Items as domain.TrailerRegistration[];
     if (trailerRegistration.length === 1) {
       return trailerRegistration[0];
     }
-    throw new Error('Multiple registrations found');
+
+    throw new domain.HTTPError(500, domain.ERRORS.MULTIPLE_REGISTRATIONS);
   }
 
   private async deregisterTrailer(
@@ -74,16 +62,12 @@ export class InsertTrailerRegistration implements IRequestHandler<domain.Trailer
     deregisterDate: Date,
   ): Promise<void> {
     try {
-      const { vinOrChassisWithMake } = trailerRegistration;
       const updatedTrailerRegistration = {
         ...trailerRegistration,
         reasonForDeregistration: domain.MESSAGES.NEW_CERTIFICATE_RECEIVED,
         deregisterDate,
       };
-      await DataAccess.getInstance().put<domain.TrailerRegistration>(updatedTrailerRegistration, {
-        conditionalExpression: 'vinOrChassisWithMake = :vinOrChassisWithMake',
-        expressionAttributeValues: { ':vinOrChassisWithMake': vinOrChassisWithMake },
-      });
+      await DataAccess.getInstance().deregisterTrailer(updatedTrailerRegistration);
     } catch (err) {
       console.error('error on deregister during insert', err);
       throw err;

@@ -11,8 +11,7 @@ const app = express();
 app.use(express.json());
 
 app.use('/*/', router);
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
+
 app.use(errorHandler);
 
 export { app };
